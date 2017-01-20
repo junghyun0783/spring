@@ -6,47 +6,66 @@ import org.springframework.stereotype.Repository;
 
 import com.gura.spring.users.dto.UsersDto;
 
-@Repository 
+// Component 스켄시 bean 으로 만들기 위한 어노테이션 
+@Repository
 public class UsersDaoImpl implements UsersDao{
 	
-	@Autowired
+	@Autowired // 의존객체를 주입 받기 위한 어노 테이션 
 	private SqlSession session;
 	
 	@Override
 	public void insert(UsersDto dto) {
-		// TODO Auto-generated method stub
-		
+		session.insert("users.insert", dto);
+
 	}
 
 	@Override
 	public boolean isValid(UsersDto dto) {
-		// TODO Auto-generated method stub
-		return false;
+		UsersDto resultDto=session.selectOne("users.isValid",dto);
+		if(resultDto==null){//select 된 정보가 없으면
+			return false;//잘못된 아이디 혹은 비밀번호
+		}else{//select 된 정보가 있으면
+			return true;//맞는 정보
+		}
 	}
 
 	@Override
 	public void update(UsersDto dto) {
-		// TODO Auto-generated method stub
-		
+		session.update("users.update",dto);
 	}
 
 	@Override
 	public void delete(String id) {
-		// TODO Auto-generated method stub
+		session.delete("users.delete",id);
 		
 	}
 
 	@Override
 	public boolean canUseId(String id) {
-		//인자로 전달된 아이디를 DB 에서 select 해본다.
-		String selectedId=session.selectOne("users.isExistId",id);
-		if(selectedId == null){//없으면
-			return true;//사용가능한 아이디입니다.
+		//인자로 전달된 아이디를 DB 에서 select 해본다. 
+		String selectedId=session.selectOne("users.isExistId", id);
+		if(selectedId==null){//없으면
+			return true;//사용가능한 아이디이다. 
 		}else{
-			return false;//사용불가능한 아이디입니다.
+			return false;
 		}
 	}
 
-	
+	@Override
+	public UsersDto getData(String id) {
+		UsersDto dto=session.selectOne("users.getData",id);
+		return dto;
+	}
 
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -38,5 +38,4 @@ public class UsersDto {
 		this.regdate = regdate;
 	}
 	
-	
 }
